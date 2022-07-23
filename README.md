@@ -7,3 +7,7 @@
 ## run dev server
 
     npm run dev
+
+# External Vercel Link
+
+https://readrss-one.vercel.app/

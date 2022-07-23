@@ -98,8 +98,3 @@ a:before {
 a:hover:before {
   transform: scaleX(1);
 }
-
-.article:hover {
-  transform: scale(1.01);
-
-}
