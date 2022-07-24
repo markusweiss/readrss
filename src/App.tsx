@@ -1,7 +1,17 @@
 import { useState } from 'react';
+import useLocalStorage from 'use-local-storage';
 import './App.css';
 
 export default function App() {
+
+  const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+
+  const switchTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+  }
+  
   const [items, setItems] = useState([]);
   const getRssFeed = async () => {
   const feedUri = 'https://dev98.de/feed/';
@@ -20,12 +30,15 @@ export default function App() {
   getRssFeed();
   return (
 
-    <div>
+    <div className="app" data-theme={theme}>
       <h1>RSS FEED</h1>
+      <button onClick={switchTheme}>
+        Switch to {theme === 'light' ? 'Dark' : 'Light'} Theme
+      </button>
       {items.map((item) => {
         return (
           <div className='article'>
-            <header><h1 className='header'>{item.title}</h1></header>
+            <header><h2 className='header'>{item.title}</h2></header>
             <p>{item.description.replace(/<[^>]+>/g, '').substr(0, 320) + '...'}</p>
             <a target="_blank" href={item.link}>{item.link}</a>
           </div>
@@ -34,4 +47,3 @@ export default function App() {
     </div>
   );
 }
-

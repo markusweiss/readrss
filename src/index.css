@@ -1,13 +1,17 @@
 :root {
+  --dark: #242424;
+  --light: #FFF;
+  --link: #00f94f;
+  --corp: #2bafe5;
+  --corplight: #00e5ff;
+}
+
+:root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  padding: 0;
+  margin: 0;
+  color: var(--corp);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,27 +27,53 @@ body {
   min-height: 100vh;
 }
 
+.app {
+  display: inline-block;
+}
+
+.app[data-theme='light'] {
+  background-color: var(--light);
+  transition: all 300ms ease-in;
+}
+.app[data-theme='dark'] {
+  transition: all 300ms ease-in;
+  background-color: var(--dark);
+
+}
+
+.app[data-theme='dark'] .article {
+  box-shadow: 0 -3px 9px rgba(252, 252, 252, 0.4), 0 6px 9px rgba(255, 255, 255, 0.5);
+}
+.app[data-theme='dark'] h1 {
+  color: var(--light);
+}
+
+.app[data-theme='dark'] button {
+  background-color: var(--light);
+  color: var(--dark);
+}
+
 h1 {
-  font-size: 3.2em;
+  margin: 0;
+  padding: 3rem 0 0 0;
+  font-size: 3.2rem;
   line-height: 1.1;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button {
+  background-color: var(--dark);
+  color: var(--light);
+  width: 240px;
+  border: none;
+  font-size: 1.2rem;
+  line-height: 1.1;
+  border-radius: 4px;
 }
 
 .article {
+  margin: 5rem 10rem;
   cursor: help;
-  box-shadow: 0 3px 9px rgba(10, 153, 181, 0.2), 0 6px 9px rgba(23, 30, 31, 0.2);
+  box-shadow: 0 0 9px rgba(10, 153, 181, 0.2), 0 6px 9px rgba(23, 30, 31, 0.2);
   margin-bottom: 100px;
   padding: 60px 30px;
   transition: transform 200ms ease-in-out;
@@ -56,22 +86,22 @@ header {
   flex-direction: column;
   align-items: center;
 }
-header h1 {
+
+header h2 {
   position: relative;
   font-size: 4rem;
   font-weight: 600;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text; 
-  border: 1px solid #fff;
 }
 
-header .header{
-  background-image: repeating-radial-gradient(farthest-corner at 6px 120px,#44e52b, #2bafe5, #00f94f);
+header .header {
+  background-image: repeating-radial-gradient(farthest-corner at 6px 120px, var(--link), var(--corp), var(--link));
 }
 
 a {
-  color: #2bafe5;
+  color: var(--corp);
   position: relative;
   text-decoration: none;
 }
@@ -82,9 +112,8 @@ a:before, a:after {
   transition: transform 500ms ease;
 }
 
-
 a:hover {
-  color: #00e5ff;
+  color: var(--corplight);
 }
 
 a:before {
@@ -92,9 +121,10 @@ a:before {
   bottom: 0;
   width: 100%;
   height: 2px;
-  background: #00f94f;
+  background: var(--link);
   transform: scaleX(0);
 }
+
 a:hover:before {
   transform: scaleX(1);
 }
