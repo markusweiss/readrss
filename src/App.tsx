@@ -42,9 +42,9 @@ export default function App() {
         <div className="app" data-theme={theme}>
             <h1>RSS FEED</h1>
             <Button handleClick={switchTheme} />
-            {items.map((item) => {
+            {items.map((item, index) => {
                 return (
-                    <div className="article">
+                    <div className="article" key={index}>
                         <header>
                             <h2 className="header">{item.title}</h2>
                         </header>
