@@ -1,9 +1,12 @@
 :root {
   --dark: #242424;
+  --dark-border: #5d6baa;
   --light: #FFF;
   --link: #00f94f;
   --corp: #2bafe5;
   --corplight: #00e5ff;
+  --sun-background: #fff308;
+  --gray-border: #e8e8ea;
 }
 
 :root {
