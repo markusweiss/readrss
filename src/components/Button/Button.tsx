@@ -1,6 +1,6 @@
 import "./Button.css";
 
-const Button = ({ handleClick, label }: ButtonProps) => {
+const Button = ({ handleClick }: ButtonProps) => {
     return (
         <>
             <div className="day-night">
@@ -20,7 +20,6 @@ const Button = ({ handleClick, label }: ButtonProps) => {
 
 interface ButtonProps {
     handleClick: () => void;
-    label: string;
 }
 
 export default Button;

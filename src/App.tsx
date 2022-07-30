@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useLocalStorage from "use-local-storage";
 import "./App.css";
-import Button from "./Button";
+import Button from "./components/Button/Button";
 
 export default function App() {
     const defaultDark = window.matchMedia(
@@ -41,7 +41,7 @@ export default function App() {
     return (
         <div className="app" data-theme={theme}>
             <h1>RSS FEED</h1>
-            <Button color="black" handleClick={switchTheme} />
+            <Button handleClick={switchTheme} />
             {items.map((item) => {
                 return (
                     <div className="article">
