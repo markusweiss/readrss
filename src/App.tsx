@@ -14,9 +14,10 @@ export default function App() {
 
     const switchTheme = () => {
         const newTheme = theme === "light" ? "dark" : "light";
+
         setTheme(newTheme);
     };
-
+    const checkStat = theme === "light" ? true : false;
     const [items, setItems] = useState([]);
     const getRssFeed = async () => {
         const feedUri = "https://dev98.de/feed/";
@@ -41,7 +42,7 @@ export default function App() {
     return (
         <div className="app" data-theme={theme}>
             <h1>RSS FEED</h1>
-            <Button handleClick={switchTheme} />
+            <Button defaultCheck={checkStat} handleClick={switchTheme} />
             {items.map((item, index) => {
                 return (
                     <div className="article" key={index}>

@@ -1,6 +1,6 @@
 import "./Button.css";
 
-const Button = ({ handleClick }: ButtonProps) => {
+const Button = ({ handleClick, defaultCheck }: ButtonProps) => {
     return (
         <>
             <div className="day-night">
@@ -8,6 +8,7 @@ const Button = ({ handleClick }: ButtonProps) => {
                     onClick={handleClick}
                     type="checkbox"
                     id="toggle"
+                    defaultChecked={defaultCheck}
                     className="toggle--checkbox"
                 />
                 <label htmlFor="toggle" className="toggle--label">
@@ -20,6 +21,7 @@ const Button = ({ handleClick }: ButtonProps) => {
 
 interface ButtonProps {
     handleClick: () => void;
+    defaultCheck: boolean;
 }
 
 export default Button;
