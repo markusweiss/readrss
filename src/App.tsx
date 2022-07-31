@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useLocalStorage from "use-local-storage";
 import "./App.css";
 import Button from "./components/Button/Button";
@@ -19,12 +19,18 @@ export default function App() {
     };
     const checkStat = theme === "light" ? true : false;
     const [items, setItems] = useState([]);
+
+    useEffect(() => {
+        getRssFeed();
+    }, []);
+
     const getRssFeed = async () => {
         const feedUri = "https://dev98.de/feed/";
 
         const res = await fetch(
             `https://api.allorigins.win/get?url=${feedUri}`
         );
+
         const { contents } = await res.json();
         const feed = new window.DOMParser().parseFromString(
             contents,
@@ -38,7 +44,7 @@ export default function App() {
         }));
         setItems(feedItems);
     };
-    getRssFeed();
+
     return (
         <div className="app" data-theme={theme}>
             <h1>RSS FEED</h1>
