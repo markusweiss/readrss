@@ -24,6 +24,8 @@ export default function App() {
         getRssFeed();
     }, []);
 
+    const [spinner, setSpinner] = useState(true);
+
     const getRssFeed = async () => {
         const feedUri = "https://dev98.de/feed/";
 
@@ -32,40 +34,47 @@ export default function App() {
         );
 
         const { contents } = await res.json();
+
         const feed = new window.DOMParser().parseFromString(
             contents,
             "text/xml"
         );
+
         const items = feed.querySelectorAll("item");
+
         const feedItems = [...items].map((element) => ({
             link: element.querySelector("link")?.innerHTML,
             title: element.querySelector("title")?.innerHTML,
             description: element.querySelector("description")?.textContent,
         }));
         setItems(feedItems);
+        setSpinner(false);
     };
-
+    console.log(spinner);
     return (
-        <div className="app" data-theme={theme}>
-            <h1>RSS FEED</h1>
-            <Button defaultCheck={checkStat} handleClick={switchTheme} />
-            {items.map((item, index) => {
-                return (
-                    <div className="article" key={index}>
-                        <header>
-                            <h2 className="header">{item.title}</h2>
-                        </header>
-                        <p>
-                            {item.description
-                                .replace(/<[^>]+>/g, "")
-                                .substr(0, 320) + "..."}
-                        </p>
-                        <a target="_blank" href={item.link}>
-                            {item.link}
-                        </a>
-                    </div>
-                );
-            })}
-        </div>
+        <>
+            {spinner ? <div className="loading">LOADING ...</div> : ""}
+            <div className="app" data-theme={theme}>
+                <h1>RSS FEED</h1>
+                <Button defaultCheck={checkStat} handleClick={switchTheme} />
+                {items.map((item, index) => {
+                    return (
+                        <div className="article" key={index}>
+                            <header>
+                                <h2 className="header">{item.title}</h2>
+                            </header>
+                            <p>
+                                {item.description
+                                    .replace(/<[^>]+>/g, "")
+                                    .substr(0, 320) + "..."}
+                            </p>
+                            <a target="_blank" href={item.link}>
+                                {item.link}
+                            </a>
+                        </div>
+                    );
+                })}
+            </div>
+        </>
     );
 }
