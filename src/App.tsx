@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import useLocalStorage from "use-local-storage";
 import "./App.css";
 import Button from "./components/Button/Button";
+import FeedBox from "./components/FeedBox/FeedBox";
 
 export default function App() {
     const defaultDark = window.matchMedia(
@@ -12,23 +13,46 @@ export default function App() {
         defaultDark ? "dark" : "light"
     );
 
-    const switchTheme = () => {
-        const newTheme = theme === "light" ? "dark" : "light";
+    const [feed, setFeed] = useState(() => {
+        return "";
+    });
 
-        setTheme(newTheme);
+    const handleChanged = (event) => {
+        setFeed(event.target.value);
+        console.log(event.target.value);
     };
+
+    const [isActive, showBox] = useState(() => {
+        return false;
+    });
+
+    const showFeedBox = () => {
+        showBox((current) => !current);
+    };
+
     const checkStat = theme === "light" ? true : false;
     const [items, setItems] = useState([]);
 
+    const feedUri = "https://dev98.de/feed/";
+
     useEffect(() => {
-        getRssFeed();
+        getRssFeed(feedUri);
     }, []);
+
+    const sendUri = () => {
+        console.log(feed);
+        //getRssFeed("https://digitaltechandbusiness.com/feed/");
+        getRssFeed(feed);
+    };
+
+    const switchTheme = () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+    };
 
     const [spinner, setSpinner] = useState(true);
 
-    const getRssFeed = async () => {
-        const feedUri = "https://dev98.de/feed/";
-
+    const getRssFeed = async (feedUri) => {
         const res = await fetch(
             `https://api.allorigins.win/get?url=${feedUri}`
         );
@@ -42,6 +66,8 @@ export default function App() {
 
         const items = feed.querySelectorAll("item");
 
+        items.length < 1 ? showBox(true) : showBox(false);
+
         const feedItems = [...items].map((element) => ({
             link: element.querySelector("link")?.innerHTML,
             title: element.querySelector("title")?.innerHTML,
@@ -50,12 +76,31 @@ export default function App() {
         setItems(feedItems);
         setSpinner(false);
     };
-    console.log(spinner);
+
     return (
         <>
             {spinner ? <div className="loading">LOADING ...</div> : ""}
             <div className="app" data-theme={theme}>
-                <h1>RSS FEED</h1>
+                <h1 onClick={showFeedBox}>RSS FEED</h1>
+                {isActive ? (
+                    <div className="feed--box">
+                        <FeedBox
+                            handleChange={handleChanged}
+                            handleUri={sendUri}
+                            defaultText="search"
+                        ></FeedBox>
+                        {items.length < 1 ? (
+                            <div className="noData">
+                                No working feed found ...
+                            </div>
+                        ) : (
+                            ""
+                        )}
+                    </div>
+                ) : (
+                    ""
+                )}
+
                 <Button defaultCheck={checkStat} handleClick={switchTheme} />
                 {items.map((item, index) => {
                     return (

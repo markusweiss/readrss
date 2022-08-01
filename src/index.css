@@ -61,6 +61,7 @@ h1 {
   padding: 3rem 0 0 0;
   font-size: 3.2rem;
   line-height: 1.1;
+  cursor: pointer;
 }
 
 button {
@@ -132,14 +133,16 @@ a:hover:before {
   transform: scaleX(1);
 }
 
+.feed--box,
 .loading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   z-index: 999;
-  position: absolute;
+  position: fixed;
   top: 0;
-  background-color: #242424;
+  background-color: var(--dark);
   width: 100vw;
   height: 100vh;
 }
