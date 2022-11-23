@@ -12,6 +12,3 @@
 
 https://readrss-one.vercel.app/
 
-## TODO
-
-Testing git globals
