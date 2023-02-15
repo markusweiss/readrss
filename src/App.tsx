@@ -33,7 +33,7 @@ export default function App() {
     const checkStat = theme === "light" ? true : false;
     const [items, setItems] = useState([]);
 
-    const feedUri = "https://dev98.de/feed/";
+    const feedUri = "https://www.netz98.de/feed/";
 
     useEffect(() => {
         getRssFeed(feedUri);
@@ -53,28 +53,21 @@ export default function App() {
 
     const getRssFeed = async (feedUri) => {
         const res = await fetch(
-            `https://api.allorigins.win/get?url=${feedUri}`
+            `https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`
         );
 
-        const { contents } = await res.json();
+        const contents = await res.json();
+        setItems(contents.items);
 
-        const feed = new window.DOMParser().parseFromString(
-            contents,
-            "text/xml"
-        );
+        contents.items.length < 1 ? showBox(true) : showBox(false);
 
-        const items = feed.querySelectorAll("item");
+        console.log("items", contents)
 
-        items.length < 1 ? showBox(true) : showBox(false);
-
-        const feedItems = [...items].map((element) => ({
-            link: element.querySelector("link")?.innerHTML,
-            title: element.querySelector("title")?.innerHTML,
-            description: element.querySelector("description")?.textContent,
-        }));
-        setItems(feedItems);
         setSpinner(false);
+
     };
+
+    console.log(items)
 
     return (
         <>
@@ -115,6 +108,9 @@ export default function App() {
                             <a target="_blank" href={item.link}>
                                 {item.link}
                             </a>
+                            <p>
+                                {item.author}
+                            </p>
                         </div>
                     );
                 })}
