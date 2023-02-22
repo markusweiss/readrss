@@ -38,6 +38,7 @@ body {
   background-color: var(--light);
   transition: all 300ms ease-in;
 }
+
 .app[data-theme='dark'] {
   transition: all 300ms ease-in;
   background-color: var(--dark);
@@ -47,6 +48,7 @@ body {
 .app[data-theme='dark'] .article {
   box-shadow: 0 -3px 9px rgba(252, 252, 252, 0.4), 0 6px 9px rgba(255, 255, 255, 0.5);
 }
+
 .app[data-theme='dark'] h1 {
   color: var(--light);
 }
@@ -97,7 +99,7 @@ header h2 {
   font-weight: 600;
   color: transparent;
   -webkit-background-clip: text;
-  background-clip: text; 
+  background-clip: text;
 }
 
 header .header {
@@ -110,7 +112,8 @@ a {
   text-decoration: none;
 }
 
-a:before, a:after {
+a:before,
+a:after {
   content: '';
   position: absolute;
   transition: transform 500ms ease;
@@ -139,10 +142,17 @@ a:hover:before {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  z-index: 999;
   position: fixed;
   top: 0;
   background-color: var(--dark);
   width: 100vw;
   height: 100vh;
+}
+
+.feed--box {
+  z-index: 998;
+}
+
+.loading {
+  z-index: 999;
 }

@@ -28,21 +28,24 @@ export default function App() {
         return false;
     });
 
-    const handleChanged = (event) => {
-        setFeed(event.target.value);
-        console.log("EV-TV:::", event.target.value);
-    };
+    let [spinner, setSpinner] = useState(() => {
+        return false;
+    });
+
+    const [items, setItems] = useState([]);
 
     const [isActive, showBox] = useState(() => {
         return false;
     });
 
+    const handleChanged = (event) => {
+        setFeed(event.target.value);
+        //console.log("EV-TV:::", event.target.value);
+    };
 
     const showFeedBox = () => {
         showBox((current) => !current);
     };
-
-    const [items, setItems] = useState([]);
 
     const feedUri = "https://www.netz98.de/feed/";
 
@@ -50,13 +53,13 @@ export default function App() {
         getRssFeed(feedUri);
     }, []);
 
-    let [spinner, setSpinner] = useState(true);
+
 
     const sendUri = () => {
         setSpinner(true);
-        console.log("sp1", spinner);
-        feed = feed ? "https://digitaltechandbusiness.com/feed/" : feed;
-        console.log("feed:::", feed);
+        //console.log("sp1", spinner);
+        feed = feed ? feed : "https://digitaltechandbusiness.com/feed/";
+        //console.log("feed:::", feed);
         //getRssFeed("https://digitaltechandbusiness.com/feed/");
         getRssFeed(feed);
     };
@@ -66,19 +69,20 @@ export default function App() {
     const getRssFeed = async (feedUri) => {
         try {
             const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`)
+            if (!res.ok) {
+                throw new Error(`HTTP error: ${res.status}`);
+            }
             const contents = await res.json();
-            console.log("items", contents);
             setItems(contents.items);
-            contents.items.length < 1 ? showBox(true) : showBox(false);
-            contents.items.length > 1 ? setSpinner(false) : setSpinner(false);
-            //setSpinner(false);
-            console.log("sp2", spinner)
-        } catch (e) {
-            console.log(e);
+            setSpinner(false);
+            showBox(false);
+        } catch (error) {
+            console.error(`Housten we have a problem: ${error}`);
+            setTimeout(() => {
+                setSpinner(false);
+            }, 3000)
         }
     };
-
-    //console.log(items)
 
     return (
         <>
@@ -92,14 +96,6 @@ export default function App() {
                             handleUri={sendUri}
                             defaultText="search"
                         ></FeedBox>
-
-                        {items.length === undefined ? (
-                            <div className="noData">
-                                No working feed found ...
-                            </div>
-                        ) : (
-                            ""
-                        )}
                     </div>
                 ) : (
                     ""
