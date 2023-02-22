@@ -24,9 +24,7 @@ export default function App() {
 
 
     /* read feed with proxy */
-    let [feed, setFeed] = useState(() => {
-        return false;
-    });
+    let [feed, setFeed] = useState();
 
     let [spinner, setSpinner] = useState(() => {
         return false;
@@ -40,7 +38,6 @@ export default function App() {
 
     const handleChanged = (event) => {
         setFeed(event.target.value);
-        //console.log("EV-TV:::", event.target.value);
     };
 
     const showFeedBox = () => {
@@ -57,10 +54,9 @@ export default function App() {
 
     const sendUri = () => {
         setSpinner(true);
-        //console.log("sp1", spinner);
-        feed = feed ? feed : "https://digitaltechandbusiness.com/feed/";
-        //console.log("feed:::", feed);
-        //getRssFeed("https://digitaltechandbusiness.com/feed/");
+        if (feed === undefined) {
+            getRssFeed("https://digitaltechandbusiness.com/feed/");
+        }
         getRssFeed(feed);
     };
 

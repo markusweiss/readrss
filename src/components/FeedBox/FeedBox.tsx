@@ -25,8 +25,6 @@ interface FeedBoxProps {
     handleChange;
     handleUri: () => void;
     defaultText: string;
-    //children?: React.ReactNode;
-    //feed: string;
     //setFeed: React.Dispatch<React.SetStateAction<string>>;
 }
 
