@@ -26,6 +26,8 @@ export default function App() {
     /* read feed with proxy */
     let [feed, setFeed] = useState();
 
+    let [isError, setError] = useState(String);
+
     let [spinner, setSpinner] = useState(() => {
         return false;
     });
@@ -40,6 +42,12 @@ export default function App() {
         setFeed(event.target.value);
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            getRssFeed(feed);
+        }
+    };
+
     const showFeedBox = () => {
         showBox((current) => !current);
     };
@@ -50,19 +58,20 @@ export default function App() {
         getRssFeed(feedUri);
     }, []);
 
-
-
     const sendUri = () => {
-        setSpinner(true);
+        setError("");
         if (feed === undefined) {
             getRssFeed("https://digitaltechandbusiness.com/feed/");
         }
-        getRssFeed(feed);
+        else {
+            getRssFeed(feed);
+        }
     };
 
     /* use proxy to pass through */
 
     const getRssFeed = async (feedUri) => {
+        setSpinner(true);
         try {
             const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`)
             if (!res.ok) {
@@ -74,25 +83,31 @@ export default function App() {
             showBox(false);
         } catch (error) {
             console.error(`Housten we have a problem: ${error}`);
+            setError(`${error}`);
             setTimeout(() => {
                 setSpinner(false);
+                showBox(true);
             }, 3000)
         }
     };
 
     return (
         <>
-            {spinner ? <div className="loading">LOADING or NO FEED FOUND...</div> : false}
+            {spinner ? <div className="loading">LOADING...</div> : false}
             <div className="app" data-theme={theme}>
                 <h1 onClick={showFeedBox}>RSS FEED</h1>
                 {isActive ? (
-                    <div className="feed--box">
-                        <FeedBox
-                            handleChange={handleChanged}
-                            handleUri={sendUri}
-                            defaultText="search"
-                        ></FeedBox>
-                    </div>
+                    <>
+                        <div className="feed--box">
+                            {isError ? <div>Status: {isError}</div> : false}
+                            <FeedBox
+                                handleChange={handleChanged}
+                                handleKeyDown={handleKeyDown}
+                                handleUri={sendUri}
+                                defaultText="search"
+                            ></FeedBox>
+                        </div>
+                    </>
                 ) : (
                     ""
                 )}

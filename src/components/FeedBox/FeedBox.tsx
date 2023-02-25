@@ -1,12 +1,13 @@
 import "./FeedBox.css";
 
-const FeedBox = ({ handleChange, handleUri, defaultText }: FeedBoxProps) => {
+const FeedBox = ({ handleChange, handleKeyDown, handleUri, defaultText }: FeedBoxProps) => {
     return (
         <>
             <div className="add--feed">
                 <label htmlFor="feed" className="feed--label"></label>
                 <input
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown}
                     type="text"
                     id="feed"
                     name="feed"
@@ -23,6 +24,7 @@ const FeedBox = ({ handleChange, handleUri, defaultText }: FeedBoxProps) => {
 
 interface FeedBoxProps {
     handleChange;
+    handleKeyDown;
     handleUri: () => void;
     defaultText: string;
     //setFeed: React.Dispatch<React.SetStateAction<string>>;
