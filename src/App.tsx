@@ -79,8 +79,15 @@ export default function App() {
             }
             const contents = await res.json();
             setItems(contents.items);
-            setSpinner(false);
-            showBox(false);
+            if (contents.items.length === 0) {
+                setSpinner(false);
+                showBox(true);
+                setError(`Feed is empty...`);
+            } else {
+                setSpinner(false);
+                showBox(false);
+            }
+
         } catch (error) {
             console.error(`Housten we have a problem: ${error}`);
             setError(`${error}`);
