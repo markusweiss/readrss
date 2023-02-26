@@ -53,6 +53,7 @@ export default function App() {
     };
 
     const feedUri = "https://www.netz98.de/feed/";
+    //const feedUri = "https://seibert-media.net/feed/";
 
     useEffect(() => {
         getRssFeed(feedUri);
