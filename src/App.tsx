@@ -60,7 +60,6 @@ export default function App() {
     }, []);
 
     const sendUri = () => {
-        setError("");
         if (feed === undefined) {
             getRssFeed("https://digitaltechandbusiness.com/feed/");
         }
@@ -70,8 +69,8 @@ export default function App() {
     };
 
     /* use proxy to pass through */
-
     const getRssFeed = async (feedUri) => {
+        setError("");
         setSpinner(true);
         try {
             const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`)
@@ -95,7 +94,7 @@ export default function App() {
             setTimeout(() => {
                 setSpinner(false);
                 showBox(true);
-            }, 3000)
+            }, 1000)
         }
     };
 
