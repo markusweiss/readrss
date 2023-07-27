@@ -1,6 +1,11 @@
 import "./FeedBox.css";
 
-const FeedBox = ({ handleChange, handleKeyDown, handleUri, defaultText }: FeedBoxProps) => {
+const FeedBox = ({
+    handleChange,
+    handleKeyDown,
+    handleUri,
+    defaultText,
+}: FeedBoxProps) => {
     return (
         <>
             <div className="add--feed">
@@ -12,7 +17,7 @@ const FeedBox = ({ handleChange, handleKeyDown, handleUri, defaultText }: FeedBo
                     id="feed"
                     name="feed"
                     className="input--feed"
-                    defaultValue="https://dev98.de/feed/"
+                    defaultValue="https://itch.io/blog.rss"
                 />
                 <button className="input--button" onClick={handleUri}>
                     {defaultText}

@@ -25,6 +25,15 @@ describe('<App />', () => {
 
             fireEvent.click(searchBt);
 
+            //screen.debug();
+        }),
+        it('Clicks day night button', async () => {
+            const wrapper = render(<App />)
+            const label = wrapper.container.querySelector('label')
+            await fireEvent.click(label);
+
+            fireEvent.click(label);
+
             screen.debug();
         })
 

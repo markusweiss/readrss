@@ -5,7 +5,6 @@ import Button from "./components/Button/Button";
 import FeedBox from "./components/FeedBox/FeedBox";
 
 export default function App() {
-
     /* theme change with local storage */
     const defaultDark = window.matchMedia(
         "(prefers-color-scheme: dark)"
@@ -21,7 +20,6 @@ export default function App() {
     };
 
     const checkStat = theme === "light" ? true : false;
-
 
     /* read feed with proxy */
     let [feed, setFeed] = useState();
@@ -43,7 +41,7 @@ export default function App() {
     };
 
     const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
+        if (event.key === "Enter") {
             getRssFeed(feed);
         }
     };
@@ -52,8 +50,8 @@ export default function App() {
         showBox((current) => !current);
     };
 
-    const feedUri = "https://www.netz98.de/feed/";
-    //const feedUri = "https://seibert-media.net/feed/";
+    const feedUri = "https://itch.io/blog.rss";
+    //const feedUri = "https://seibert-media.net/feed/"; //example empty feed
 
     useEffect(() => {
         getRssFeed(feedUri);
@@ -61,9 +59,8 @@ export default function App() {
 
     const sendUri = () => {
         if (feed === undefined) {
-            getRssFeed("https://digitaltechandbusiness.com/feed/");
-        }
-        else {
+            getRssFeed("https://itch.io/feed/featured.xml");
+        } else {
             getRssFeed(feed);
         }
     };
@@ -73,7 +70,9 @@ export default function App() {
         setError("");
         setSpinner(true);
         try {
-            const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`)
+            const res = await fetch(
+                `https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`
+            );
             if (!res.ok) {
                 throw new Error(`HTTP error: ${res.status}`);
             }
@@ -87,14 +86,13 @@ export default function App() {
                 setSpinner(false);
                 showBox(false);
             }
-
         } catch (error) {
             console.error(`Housten we have a problem: ${error}`);
             setError(`${error}`);
             setTimeout(() => {
                 setSpinner(false);
                 showBox(true);
-            }, 1000)
+            }, 1000);
         }
     };
 
@@ -120,26 +118,25 @@ export default function App() {
                 )}
 
                 <Button defaultCheck={checkStat} handleClick={switchTheme} />
-                {!spinner && items.map((item, index) => {
-                    return (
-                        <div className="article" key={index}>
-                            <header>
-                                <h2 className="header">{item.title}</h2>
-                            </header>
-                            <p>
-                                {item.description
-                                    .replace(/<[^>]+>/g, "")
-                                    .substr(0, 320) + "..."}
-                            </p>
-                            <a target="_blank" href={item.link}>
-                                {item.link}
-                            </a>
-                            <p>
-                                {item.author}
-                            </p>
-                        </div>
-                    );
-                })}
+                {!spinner &&
+                    items.map((item, index) => {
+                        return (
+                            <div className="article" key={index}>
+                                <header>
+                                    <h2 className="header">{item.title}</h2>
+                                </header>
+                                <p>
+                                    {item.description
+                                        .replace(/<[^>]+>/g, "")
+                                        .substr(0, 320) + "..."}
+                                </p>
+                                <a target="_blank" href={item.link}>
+                                    {item.link}
+                                </a>
+                                <p>{item.author}</p>
+                            </div>
+                        );
+                    })}
             </div>
         </>
     );
