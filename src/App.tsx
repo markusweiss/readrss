@@ -5,13 +5,12 @@ import Button from "./components/Button/Button";
 import FeedBox from "./components/FeedBox/FeedBox";
 
 export default function App() {
-    /* theme change with local storage */
-    const defaultDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-    ).matches;
     const [theme, setTheme] = useLocalStorage(
         "theme",
-        defaultDark ? "dark" : "light"
+        typeof window !== "undefined" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light",
     );
 
     const switchTheme = () => {
@@ -19,22 +18,13 @@ export default function App() {
         setTheme(newTheme);
     };
 
-    const checkStat = theme === "light" ? true : false;
+    const checkStat = theme === "light";
 
-    /* read feed with proxy */
-    let [feed, setFeed] = useState();
-
-    let [isError, setError] = useState(String);
-
-    let [spinner, setSpinner] = useState(() => {
-        return false;
-    });
-
+    const [feed, setFeed] = useState("");
+    const [isError, setError] = useState("");
+    const [spinner, setSpinner] = useState(false);
     const [items, setItems] = useState([]);
-
-    const [isActive, showBox] = useState(() => {
-        return false;
-    });
+    const [isActive, showBox] = useState(false);
 
     const handleChanged = (event) => {
         setFeed(event.target.value);
@@ -50,90 +40,95 @@ export default function App() {
         showBox((current) => !current);
     };
 
-    const feedUri = "https://itch.io/blog.rss";
-    //const feedUri = "https://seibert-media.net/feed/"; //example empty feed
+    const feedUri = "https://feeds.feedburner.com/bahnonline/bo";
 
     useEffect(() => {
         getRssFeed(feedUri);
     }, []);
 
     const sendUri = () => {
-        if (feed === undefined) {
-            getRssFeed("https://itch.io/feed/featured.xml");
+        if (!feed || feed.trim() === "") {
+            getRssFeed("https://feeds.feedburner.com/bahnonline/bo");
         } else {
-            getRssFeed(feed);
+            getRssFeed(feed.trim());
         }
     };
 
-    /* use proxy to pass through */
     const getRssFeed = async (feedUri) => {
         setError("");
         setSpinner(true);
         try {
             const res = await fetch(
-                `https://api.rss2json.com/v1/api.json?rss_url=${feedUri}`
+                `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUri)}`,
             );
             if (!res.ok) {
                 throw new Error(`HTTP error: ${res.status}`);
             }
             const contents = await res.json();
-            setItems(contents.items);
-            if (contents.items.length === 0) {
+
+            if (!contents.items || contents.items.length === 0) {
+                setItems([]);
                 setSpinner(false);
                 showBox(true);
                 setError(`Feed is empty...`);
             } else {
+                setItems(contents.items);
                 setSpinner(false);
                 showBox(false);
             }
         } catch (error) {
-            console.error(`Housten we have a problem: ${error}`);
-            setError(`${error}`);
-            setTimeout(() => {
-                setSpinner(false);
-                showBox(true);
-            }, 1000);
+            console.error(`Houston we have a problem: ${error}`);
+            setError(`${error.message || error}`);
+            setSpinner(false);
+            showBox(true);
         }
     };
 
     return (
         <>
-            {spinner ? <div className="loading">LOADING...</div> : false}
+            {spinner && <div className="loading">LOADING...</div>}
             <div className="app" data-theme={theme}>
-                <h1 onClick={showFeedBox}>RSS FEED</h1>
-                {isActive ? (
-                    <>
-                        <div className="feed--box">
-                            {isError ? <div>Status: {isError}</div> : false}
-                            <FeedBox
-                                handleChange={handleChanged}
-                                handleKeyDown={handleKeyDown}
-                                handleUri={sendUri}
-                                defaultText="search"
-                            ></FeedBox>
-                        </div>
-                    </>
-                ) : (
-                    ""
+                <h1 onClick={showFeedBox} style={{ cursor: "pointer" }}>
+                    RSS FEED
+                </h1>
+                {isActive && (
+                    <div className="feed--box">
+                        {isError && <div>Status: {isError}</div>}
+                        <FeedBox
+                            handleChange={handleChanged}
+                            handleKeyDown={handleKeyDown}
+                            handleUri={sendUri}
+                            defaultText="search"
+                        />
+                    </div>
                 )}
 
                 <Button defaultCheck={checkStat} handleClick={switchTheme} />
                 {!spinner &&
                     items.map((item, index) => {
+                        const descriptionText = item.description
+                            ? item.description
+                                  .replace(/<[^>]+>/g, "")
+                                  .substr(0, 320) + "..."
+                            : "Keine Beschreibung verfügbar.";
+
                         return (
-                            <div className="article" key={index}>
+                            <div
+                                className="article"
+                                key={item.guid || item.link || index}
+                            >
                                 <header>
                                     <h2 className="header">{item.title}</h2>
                                 </header>
-                                <p>
-                                    {item.description
-                                        .replace(/<[^>]+>/g, "")
-                                        .substr(0, 320) + "..."}
-                                </p>
-                                <a target="_blank" href={item.link}>
+                                <p>{descriptionText}</p>
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={item.link}
+                                >
                                     {item.link}
                                 </a>
-                                <p>{item.author}</p>
+                                {item.author && <p>{item.author}</p>}
                             </div>
                         );
                     })}
