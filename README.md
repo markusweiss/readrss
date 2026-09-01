@@ -11,5 +11,3 @@
 # External Vercel Link
 
 https://readrss-one.vercel.app/
-
-# Testing Vercel Build
