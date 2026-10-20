@@ -4,6 +4,8 @@ import "./App.css";
 import Button from "./components/Button/Button";
 import FeedBox from "./components/FeedBox/FeedBox";
 
+const DEFAULT_FEED = "https://feeds.feedburner.com/bahnonline/bo";
+
 export default function App() {
     const [theme, setTheme] = useLocalStorage(
         "theme",
@@ -14,8 +16,7 @@ export default function App() {
     );
 
     const switchTheme = () => {
-        const newTheme = theme === "light" ? "dark" : "light";
-        setTheme(newTheme);
+        setTheme(theme === "light" ? "dark" : "light");
     };
 
     const checkStat = theme === "light";
@@ -32,7 +33,7 @@ export default function App() {
 
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
-            getRssFeed(feed);
+            loadFeed(feed);
         }
     };
 
@@ -40,47 +41,42 @@ export default function App() {
         showBox((current) => !current);
     };
 
-    const feedUri = "https://feeds.feedburner.com/bahnonline/bo";
-
     useEffect(() => {
-        getRssFeed(feedUri);
+        loadFeed(DEFAULT_FEED);
     }, []);
 
     const sendUri = () => {
-        if (!feed || feed.trim() === "") {
-            getRssFeed("https://feeds.feedburner.com/bahnonline/bo");
-        } else {
-            getRssFeed(feed.trim());
-        }
+        loadFeed(feed && feed.trim() !== "" ? feed.trim() : DEFAULT_FEED);
     };
 
-    const getRssFeed = async (feedUri) => {
+    const loadFeed = async (feedUri) => {
         setError("");
         setSpinner(true);
         try {
             const res = await fetch(
-                `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUri)}`,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUri)}`,
             );
             if (!res.ok) {
                 throw new Error(`HTTP error: ${res.status}`);
             }
-            const contents = await res.json();
 
-            if (!contents.items || contents.items.length === 0) {
+            const xmlText = await res.text();
+            const parsedItems = parseRss(xmlText);
+
+            if (parsedItems.length === 0) {
                 setItems([]);
-                setSpinner(false);
                 showBox(true);
-                setError(`Feed is empty...`);
+                setError("Feed is empty...");
             } else {
-                setItems(contents.items);
-                setSpinner(false);
+                setItems(parsedItems);
                 showBox(false);
             }
         } catch (error) {
             console.error(`Houston we have a problem: ${error}`);
             setError(`${error.message || error}`);
-            setSpinner(false);
             showBox(true);
+        } finally {
+            setSpinner(false);
         }
     };
 
@@ -109,7 +105,7 @@ export default function App() {
                         const descriptionText = item.description
                             ? item.description
                                   .replace(/<[^>]+>/g, "")
-                                  .substr(0, 320) + "..."
+                                  .slice(0, 320) + "..."
                             : "Keine Beschreibung verfügbar.";
 
                         return (
@@ -135,4 +131,23 @@ export default function App() {
             </div>
         </>
     );
+}
+
+// RSS-XML im Browser parsen
+function parseRss(xmlText) {
+    const doc = new DOMParser().parseFromString(xmlText, "text/xml");
+    const nodes = Array.from(doc.querySelectorAll("item"));
+
+    return nodes.map((node) => {
+        const get = (tag) =>
+            node.querySelector(tag)?.textContent?.trim() ?? null;
+        return {
+            title: get("title"),
+            link: get("link"),
+            description: get("description"),
+            author: get("author") || get("dc\\:creator") || get("creator"),
+            pubDate: get("pubDate"),
+            guid: get("guid"),
+        };
+    });
 }
